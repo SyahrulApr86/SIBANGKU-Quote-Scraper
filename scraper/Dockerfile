@@ -1,24 +1,16 @@
 # Gunakan image Python sebagai base
 FROM python:3.9-slim
 
-# Install cron
-RUN apt-get update && apt-get install -y cron
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
 
-# Copy script dan file dependencies ke dalam container
+# Copy seluruh file ke dalam container
 WORKDIR /app
 COPY . /app
 
 # Install dependencies dari requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy crontab file
-COPY crontab /etc/cron.d/my-cron-job
 
-# Beri izin pada crontab file
-RUN chmod 0644 /etc/cron.d/my-cron-job
-
-# Apply crontab file
-RUN crontab /etc/cron.d/my-cron-job
-
-# Start cron service dan jalankan container
-CMD ["cron", "-f"]
+# Jalankan script secara langsung
+CMD ["python", "script.py"]

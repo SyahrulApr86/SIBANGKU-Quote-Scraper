@@ -4,6 +4,7 @@ import requests
 import html
 import psycopg2
 from datetime import datetime
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,14 +26,22 @@ headers = {
 
 # Connect to PostgreSQL database
 def connect_db():
+    # Get database connection parameters from environment variables
+    DB_HOST = os.getenv('DB_HOST', 'localhost')
+    DB_NAME = os.getenv('DB_NAME', 'quotesdb')
+    DB_USER = os.getenv('DB_USER', 'user')
+    DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
+    DB_PORT = os.getenv('DB_PORT', '5432')  # Ganti dengan port yang sesuai jika perlu
+
     conn = psycopg2.connect(
-        host="localhost",
-        database="quotesdb",
-        user="user",
-        password="password",
-        port="5555"
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        port=DB_PORT
     )
     return conn
+
 
 # Function to retrieve all existing quotes and return as a set for quick lookup
 def get_existing_quotes(conn):
@@ -126,25 +135,20 @@ def get_quote_name_year(session):
     return quote, name, year
 
 def main():
-    # Initialize session
-    session = requests.Session()
+    while True:
+        # Your existing code here
+        session = requests.Session()
+        conn = connect_db()
+        existing_quotes = get_existing_quotes(conn)
+        login(session)
+        for i in range(10_000):
+            quote, name, year = get_quote_name_year(session)
+            insert_quote_if_not_exists(quote, name, year, conn, existing_quotes)
+        conn.close()
 
-    # Connect to the database
-    conn = connect_db()
+        # Wait for 2 hours (7200 seconds)
+        time.sleep(7200)
 
-    # Retrieve all existing quotes to avoid duplicates
-    existing_quotes = get_existing_quotes(conn)
-
-    # Call the login function once
-    login(session)
-
-    # Loop to get multiple quotes and store them in the database
-    for i in range(10_000):  # Adjust the range as needed
-        quote, name, year = get_quote_name_year(session)
-        insert_quote_if_not_exists(quote, name, year, conn, existing_quotes)
-
-    # Close the database connection
-    conn.close()
 
 if __name__ == "__main__":
     main()
