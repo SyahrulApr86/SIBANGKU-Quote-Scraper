@@ -83,6 +83,17 @@
             letter-spacing: 0.5px;
         }
 
+        .table td {
+            vertical-align: middle;
+        }
+
+        /* Wrap text in quote column */
+        .quote-column {
+            word-wrap: break-word;
+            white-space: normal;
+            max-width: 300px; /* Set a reasonable width */
+        }
+
         .custom-container {
             width: 90%;
             max-width: none;
@@ -129,7 +140,7 @@
                 {% for quote, name, year in quotes %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ quote }}</td>
+                    <td class="quote-column">{{ quote }}</td>
                     <td>{{ name }}</td>
                     <td>{{ year }}</td>
                 </tr>
