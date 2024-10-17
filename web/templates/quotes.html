@@ -126,9 +126,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for index, (quote, name, year) in enumerate(quotes, 1) %}
+                {% for quote, name, year in quotes %}
                 <tr>
-                    <td>{{ index }}</td>
+                    <td>{{ loop.index }}</td>
                     <td>{{ quote }}</td>
                     <td>{{ name }}</td>
                     <td>{{ year }}</td>
