@@ -11,7 +11,6 @@ services:
       - "5432:5432"
     volumes:
       - ./db/db-init:/docker-entrypoint-initdb.d
-      - postgres-data:/var/lib/postgresql/data 
     networks:
       - app-network
 
